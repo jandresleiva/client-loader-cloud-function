@@ -14,7 +14,7 @@ resource "google_cloudfunctions_function" "function" {
   source_archive_bucket = google_storage_bucket.bucket.name
   source_archive_object = google_storage_bucket_object.archive.name
   trigger_http          = true
-  entry_point           = "http_handler" # This is the name of the function that will be executed in your Python code
+  entry_point           = "clientsDatabase" # This is the name of the function that will be executed in your Python code
 }
 
 # Service Account for Function
