@@ -1,0 +1,4 @@
+terraform/service-account.json
+.terraform
+.terraform*
+generated/*
