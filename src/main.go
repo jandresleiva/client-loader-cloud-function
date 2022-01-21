@@ -1,31 +1,41 @@
 // Package clientsDatabase provides a set of Cloud Functions samples.
-package clientsDatabase
+package main
 
 import (
-	"encoding/json"
+	"encoding/csv"
 	"fmt"
-	"html"
-	"net/http"
-
-	"github.com/GoogleCloudPlatform/functions-framework-go/functions"
+	"io"
+	"log"
+	"os"
 )
 
-func init() {
-	functions.HTTP("clientsDatabase", clientsDatabase)
+func main() {
+	f, err := os.Open("example.csv")
+
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	r := csv.NewReader(f)
+
+	for {
+		record, err := r.Read()
+
+		if err == io.EOF {
+			break
+		}
+
+		if err != nil {
+			log.Fatal(err)
+		}
+
+		reader(record, defaultProcessor)
+		fmt.Println("\n")
+	}
 }
 
-// helloHTTP is an HTTP Cloud Function with a request parameter.
-func clientsDatabase(w http.ResponseWriter, r *http.Request) {
-	var d struct {
-		Name string `json:"name"`
-	}
-	if err := json.NewDecoder(r.Body).Decode(&d); err != nil {
-		fmt.Fprint(w, "Hello, World!")
-		return
-	}
-	if d.Name == "" {
-		fmt.Fprint(w, "Hello, World!")
-		return
-	}
-	fmt.Fprintf(w, "Hello, %s!", html.EscapeString(d.Name))
+type processor func(line []string)
+
+func reader(line []string, processorFunction processor) {
+	processorFunction(line)
 }
